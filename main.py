@@ -10,8 +10,8 @@ from enum import Enum
 
 
 COIN_NAMES = [
-    "BTC",
-    "ETH",
+    # "BTC",
+    # "ETH",
     "ADA",
     "1INCH",
     "HNT",
@@ -29,7 +29,7 @@ COIN_NAMES = [
 starting_cash = 1.0
 baseline_total = starting_cash
 strategy_total = starting_cash
-stratege_reset_interval_days = 30
+stratege_reset_interval_days = 10
 
 
 coin_data = [pd.read_csv(f"{c}.csv") for c in COIN_NAMES]
@@ -40,7 +40,11 @@ initial_coin_quantities = [0 for c in COIN_NAMES]
 total_days = len(coin_data[0])
 total_type_of_coins = len(coin_data)
 i = 0
-starting_offset = 119
+
+
+# CONFIG 2 VALUES BELOW
+starting_offset = 200
+stratege_reset_interval_days = 10
 
 
 class ColEnum(int, Enum):
@@ -86,20 +90,24 @@ while i + starting_offset < total_days:
             initial_coin_quantities = [x for x in coin_quantities]
 
     if i + starting_offset == total_days - 1:
-        strategy_total = sum([
-            n * price
-            for n, price in zip(
-                coin_quantities,
-                [x.iloc[i + starting_offset, ColEnum.close] for x in coin_data],
-            )
-        ])
-        baseline_total = sum([
-            n * price
-            for n, price in zip(
-                initial_coin_quantities,
-                [x.iloc[i + starting_offset, ColEnum.close] for x in coin_data],
-            )
-        ])
+        strategy_total = sum(
+            [
+                n * price
+                for n, price in zip(
+                    coin_quantities,
+                    [x.iloc[i + starting_offset, ColEnum.close] for x in coin_data],
+                )
+            ]
+        )
+        baseline_total = sum(
+            [
+                n * price
+                for n, price in zip(
+                    initial_coin_quantities,
+                    [x.iloc[i + starting_offset, ColEnum.close] for x in coin_data],
+                )
+            ]
+        )
 
         print(
             f"FINALLY!!! After {i} days, with strategy: {strategy_total}, baseline: {baseline_total}"
